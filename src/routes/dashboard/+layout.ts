@@ -15,5 +15,3 @@ export const load: LayoutLoad = async (e) => {
 
 	return { docs, token: e.data.token };
 };
-
-export const ssr = false;

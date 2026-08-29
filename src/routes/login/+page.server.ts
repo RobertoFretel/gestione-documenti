@@ -17,7 +17,6 @@ export const actions: Actions = {
     const password = formData.get('password');
 
     const result = loginSchema.safeParse({ email, password });
-    console.log(result)
 
     if (!result.success) {
       const errors = z.treeifyError(result.error);
@@ -37,7 +36,7 @@ export const actions: Actions = {
         headers: request.headers
       })
     } catch (error) {
-      
+      console.log(error)
       return fail(401, {
         type: "pocketbase_error",
         errors: "Invalid email or password",

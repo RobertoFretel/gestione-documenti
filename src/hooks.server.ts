@@ -9,6 +9,8 @@ export const handle: Handle = async ({ event, resolve }) => {
     headers: event.request.headers,
   });
 
+  console.log(session)
+
   if (session) {
     event.locals.session = session.session;
     event.locals.user = session.user;

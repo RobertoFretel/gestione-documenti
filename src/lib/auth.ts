@@ -13,12 +13,12 @@ await client.collection("_superusers").authWithPassword(POCKETBASE_ADMIN_EMAIL, 
 export const auth = betterAuth({
   database: pocketBaseAdapter({
     pb: client,
-    usePlural: false
+    usePlural: false,
   }),
   emailAndPassword: { enabled: true },
   plugins: [sveltekitCookies(getRequestEvent)],
   hooks: {
-    after: createAuthMiddleware(async ({ context, path, setCookie,  }) => {
+    after: createAuthMiddleware(async ({ context, path, setCookie }) => {
       const session = context.newSession
       if (path.startsWith("/sign-up") && session) {
         const password = crypto.randomUUID()
@@ -62,5 +62,5 @@ export const auth = betterAuth({
         setCookie("pb_auth", "", { maxAge: 0 })
       }
     })
-  }
+  },
 });
