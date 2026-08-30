@@ -3,7 +3,7 @@ import { pocketBaseAdapter } from "pocketbase-better-auth";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { getRequestEvent } from "$app/server";
 import Pocketbase from "pocketbase"
-import { POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD } from "$env/static/private"
+import { POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD, BETTER_AUTH_SECRET } from "$env/static/private"
 import { createAuthMiddleware } from "better-auth/api";
 
 
@@ -11,6 +11,7 @@ const client = new Pocketbase("http://192.168.0.102:8090")
 await client.collection("_superusers").authWithPassword(POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD);
 
 export const auth = betterAuth({
+  secret: BETTER_AUTH_SECRET,
   database: pocketBaseAdapter({
     pb: client,
     usePlural: false,

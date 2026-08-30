@@ -4,7 +4,7 @@ import type { DocumentsResponse } from "$lib/pocketbase-types";
 
 const MODIFICATION_STATE = Symbol("MODIFICATION_STATE");
 
-class ModificationState {
+export class ModificationState {
   modificationOpen = $state<boolean>(false);
   descrizione = $state<string>("");
   selectedCalendarDate = $state<CalendarDate | undefined>();
@@ -19,7 +19,7 @@ class ModificationState {
       if (!this.modificationOpen) {
         if (record) {
           this.descrizione = record.descrizione ?? "";
-          const docDate = this.adjustTimeZone(new Date(record.docTime));
+          const docDate = ModificationState.adjustTimeZone(new Date(record.docTime));
           this.selectedCalendarDate = new CalendarDate(
             docDate.getFullYear(), 
             docDate.getMonth() + 1, 
@@ -34,9 +34,8 @@ class ModificationState {
     });
   }
 
-  adjustTimeZone(d: Date) {
+  static adjustTimeZone(d: Date) {
     const dateCopy = new Date(d);
-    dateCopy.setHours(dateCopy.getHours() + dateCopy.getTimezoneOffset() / 60);
     return dateCopy;
   }
 
@@ -56,7 +55,6 @@ class ModificationState {
     if (!cDate) return null;
     const [hours, minutes] = timeStr.split(":").map(Number);
     const newD = new Date(cDate.year, cDate.month - 1, cDate.day, hours || 0, minutes || 0);
-    newD.setHours(newD.getHours() - newD.getTimezoneOffset() / 60);
     return newD
   }
 }

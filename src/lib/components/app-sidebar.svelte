@@ -26,7 +26,7 @@
       },
       {
         title: "Raccolte",
-        url: "#",
+        url: "/dashboard/raccolte",
         icon: Archive,
       },
     ], 

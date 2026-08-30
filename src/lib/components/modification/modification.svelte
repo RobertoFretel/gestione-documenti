@@ -14,13 +14,10 @@
   import { getDocumentsState } from "$lib/hooks/documents.svelte";
   import { getModificationState } from "./modification-state.svelte.ts";
 
-  import type { CalendarDate } from "@internationalized/date";
-
   const drawerState = getModificationState()
   const docState = getDocumentsState()
 
 </script>
-
 
 
 <Drawer.Root bind:open={drawerState.modificationOpen}>

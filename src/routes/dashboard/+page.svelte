@@ -1,68 +1,101 @@
 <script lang="ts">
-  import * as RadioGroup from "$lib/components/ui/radio-group"
-  import * as Card from "$lib/components/ui/card";
-  import * as Item from "$lib/components/ui/item";
-  
-  import Modification from "$lib/components/modification/modification.svelte";
-  import Button from "$lib/components/ui/button/button.svelte";
-  import { Spinner } from "$lib/components/ui/spinner"
-  import { Toaster } from "$lib/components/ui/sonner";
-  
-  import { getDocumentsState } from "$lib/hooks/documents.svelte";
-  import { getModificationState } from "$lib/components/modification/modification-state.svelte";
-  
-  import Eye from "@lucide/svelte/icons/eye"
+  import * as Card from "$lib/components/ui/card"
+  import { Badge } from "$lib/components/ui/badge/index.js";
+  import { Button } from "$lib/components/ui/button/index.js";
+
+  import { getDocumentsState } from '$lib/hooks/documents.svelte';
+  import { pb } from "$lib";
 
   const docState = getDocumentsState()
-  const drawerState = getModificationState()
+  let trigger = $state(0);
+
+  let futureDocs = $derived.by(() => {
+    const _ = trigger;
+    const now = Date.now();
+
+    return docState.docsList
+      .filter(doc => new Date(doc.docTime).getTime() > now)
+      .sort((a, b) => {
+        const timeA = new Date(a.docTime).getTime();
+        const timeB = new Date(b.docTime).getTime();
+        return (timeA - now) - (timeB - now);
+      });
+  });
+
+  $effect(() => {
+    const docs = futureDocs;
+    if (docs.length === 0) return;
+
+    const now = Date.now();
+    const nextDocTime = new Date(docs[0].docTime).getTime();
+    const timeRemaining = nextDocTime - now;
+
+    if (timeRemaining > 0 && timeRemaining < 2147483647) {
+      const timer = setTimeout(() => {
+        trigger++;
+      }, timeRemaining + 10);
+
+      return () => clearTimeout(timer);
+    }
+  });
+
 </script>
 
-<main class="w-full min-h-full p-4 pb-24 relative">
-  {#if docState.categoryDocs.length === 0}
-    <section class="w-full h-screen flex justify-center items-center">
-      <Spinner />
+<main class="w-full h-full flex flex-col justify-end items-center gap-4 p-4">
+  <section class="flex-1 w-full">
+    <p class="text-xl font-light first-letter:uppercase">{new Date().toLocaleString("it", { dayPeriod: "long" })}</p>
+    <h1 class="first-letter:uppercase font-bold text-2xl">
+      {new Date().toLocaleString("it", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
+    </h1>
+  </section>
+  {#if futureDocs.length > 0}
+    {@const firstDoc = futureDocs[0]}
+    {@const anteprima = firstDoc.attachments.length > 0 ? true : false}
+    <Card.Root class="relative mx-auto w-full max-w-xs pt-0 h-1/2">
+      <div class="absolute inset-0 z-30 aspect-video bg-black/35"></div>
+      {#if anteprima}
+        <iframe
+          title={firstDoc.titolo}
+          src={pb.files.getURL(firstDoc, firstDoc.attachments[0])}
+          class="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
+        ></iframe>
+      {:else}
+        <div
+          class="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
+        >
+          Nessun anteprima
+        </div>
+      {/if}
+      <Card.Header>
+        <Card.Action>
+          {#if firstDoc.favorite}
+            <Badge variant="secondary">Preferito!</Badge>
+          {/if}
+        </Card.Action>
+        <Card.Title>{firstDoc.titolo}</Card.Title>
+        <Card.Description>
+          {firstDoc.descrizione}
+        </Card.Description>
+      </Card.Header>
+      <Card.Footer>
+        <Button class="w-full" onclick={() => {
+          docState.setSelectedDocId = firstDoc.id
+        }}>Seleziona documento</Button>
+      </Card.Footer>
+    </Card.Root>
+    <section class="w-full flex gap-4">
+      <div class="aspect-square h-full flex-1 border border-b rounded-xl p-4">
+        <hgroup class="w-full h-full flex flex-col justify-center">
+          <h1 class="font-black text-xl">{futureDocs.length - 1}</h1>
+          <p class="font-light">documenti in arrivo...</p>
+        </hgroup>
+      </div>
+      <div class="aspect-square h-full flex-1 border border-b rounded-xl p-4">
+        <hgroup class="w-full h-full flex flex-col justify-center">
+          <h1 class="font-black text-xl">{docState.docsList.length}</h1>
+          <p class="font-light">documenti totali!</p>
+        </hgroup>
+      </div>
     </section>
-  {:else}
-    <RadioGroup.Root 
-      value={docState.selectedDocId ?? ""} 
-      onValueChange={(v) => docState.setSelectedDocId = v}
-    >
-      {#each docState.categoryDocs as categoryDocs}
-        <section class="flex flex-col gap-4">
-          <h1 class="text-xl capitalize font-bold pt-4">{categoryDocs.categoria}</h1>
-          <Card.Root class="p-0">
-            <Card.Content class="px-0">
-              {#each categoryDocs.docs as finalDocs (finalDocs.id)}
-                <Item.Root 
-                  for={finalDocs.id} 
-                  class="select-none active:bg-accent/50"
-                >
-                  <Item.Content class="pointer-events-none">
-                    <Item.Title>{finalDocs.titolo}</Item.Title>
-                    <Item.Description>{finalDocs.descrizione}</Item.Description>
-                  </Item.Content>
-                  <Item.Actions class="p-2 pointer-events-none">
-                    <RadioGroup.Item value={finalDocs.id} id={finalDocs.id} />
-                  </Item.Actions>
-                </Item.Root>
-              {/each}
-            </Card.Content>
-          </Card.Root>
-        </section>  
-      {/each}
-    </RadioGroup.Root>
-  {/if}
-  {#if docState.selectedDoc}
-    <div class="w-full fixed bottom-6 px-6 z-40 flex items-center gap-2">
-      <Button 
-        variant="default" 
-        class="h-12! w-12! rounded-full shadow-xl font-bold flex items-center justify-center p-0 touch-manipulation" 
-        onclick={() => drawerState.modificationOpened = true}
-      >
-        <Eye class="w-6! h-6!" />
-      </Button>
-    </div>
   {/if}
 </main>
-<Modification />
-<Toaster position="top-center" />

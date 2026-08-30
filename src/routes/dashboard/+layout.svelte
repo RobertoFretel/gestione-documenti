@@ -2,6 +2,9 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import AppSidebar from "$lib/components/app-sidebar.svelte";
+  import Modification from "$lib/components/modification/modification.svelte";
+  import { Toaster } from "$lib/components/ui/sonner";
+  
   
   import Button, { buttonVariants } from "$lib/components/ui/button/button.svelte";
   import AddIcon from "@lucide/svelte/icons/file-plus"
@@ -11,8 +14,10 @@
 
   import { useCompleteAuth, pb } from "$lib";
   import { setDocumentsState } from "$lib/hooks/documents.svelte";
-  import { setModificationState } from "$lib/components/modification/modification-state.svelte";
+  import { ModificationState, setModificationState } from "$lib/components/modification/modification-state.svelte";
   import { CalendarDate } from "@internationalized/date";
+
+  import Edit from "@lucide/svelte/icons/pencil"
 
   import { cn } from "$lib/utils.js";
 
@@ -57,7 +62,7 @@
 
 <Dialog.Root bind:open={dialogOpen} onOpenChange={(o) => {
   if (o) {
-    const docDate = drawerState.adjustTimeZone(new Date())
+    const docDate = ModificationState.adjustTimeZone(new Date())
     drawerState.selectedCalendarDate = new CalendarDate(
       docDate.getFullYear(), 
       docDate.getMonth() + 1, 
@@ -77,18 +82,39 @@
           <Sidebar.Trigger />
           <h1 class="font-medium">Gestione dei documenti</h1>
         </div>
-        <div class="h-full flex gap-4 items-center">
-          <Dialog.Trigger
-            type="button"
-            class={cn("font-bold flex items-center aspect-square rounded-full text-xl", buttonVariants({ variant: "ghost" }))}
-          >
-            <AddIcon class="w-full h-full" />
-          </Dialog.Trigger>
-        </div>
       </header>
       <section class="w-full flex-1 overflow-y-scroll">
         {@render children?.()}
       </section>
+      <footer class="w-full h-20 flex items-center justify-between p-4">
+        {#if docState.selectedDoc}
+          <Button 
+            variant="ghost" 
+            size="lg"
+            class="rounded-full font-bold flex items-center justify-center touch-manipulation" 
+            onclick={() => drawerState.modificationOpened = true}
+          >
+            Visualizza/Modifica
+            <Edit />
+          </Button>
+        
+        {:else}
+          <Button 
+            variant="ghost"
+            disabled
+            size="lg"
+            class="rounded-full font-bold flex items-center justify-center touch-manipulation" 
+          >
+            Seleziona un documento
+          </Button>
+        {/if}
+        <Dialog.Trigger
+          type="button"
+          class={cn("font-bold flex items-center aspect-square rounded-full text-xl", buttonVariants({ variant: "ghost" }))}
+        >
+          <AddIcon class="w-full h-full" />
+        </Dialog.Trigger>
+      </footer>
     </main>
   </Sidebar.Provider>
   <Dialog.Content>
@@ -127,3 +153,5 @@
     </form>
   </Dialog.Content>
 </Dialog.Root>
+<Modification />
+<Toaster position="top-center" />
