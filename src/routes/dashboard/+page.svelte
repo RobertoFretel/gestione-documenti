@@ -41,8 +41,8 @@
 
 </script>
 
-<main class="w-full h-full flex flex-col justify-end items-center gap-4 p-4 overflow-y-scroll">
-  <section class="flex-1 w-full">
+<main class="w-full min-h-full flex flex-col justify-end items-center gap-4 p-4">
+  <section class="h-20 w-full">
     <p class="text-xl font-light first-letter:uppercase">{new Date().toLocaleString("it", { dayPeriod: "long" })}</p>
     <h1 class="first-letter:uppercase font-bold text-2xl">
       {new Date().toLocaleString("it", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
@@ -51,7 +51,7 @@
   {#if futureDocs.length > 0}
     {@const firstDoc = futureDocs[0]}
     {@const anteprima = firstDoc.attachments.length > 0 ? true : false}
-    <Card.Root class="relative mx-auto w-full max-w-xs pt-0 h-3/5">
+    <Card.Root class="relative mx-auto w-full max-w-xs pt-0 min-h-80">
       <div class="absolute inset-0 z-30 aspect-video bg-black/35"></div>
       {#if anteprima}
         <iframe

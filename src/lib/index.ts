@@ -5,8 +5,13 @@ import PocketBase from "pocketbase"
 import type { SvelteAuthClient } from "better-auth/svelte";
 import type { TypedPocketBase } from "./pocketbase-types"
 import type { BetterAuthClientOptions } from "better-auth/client";
+import { dev } from "$app/environment";
 
 const getClientPbUrl = () => {
+  if (dev) {
+    return "http://192.168.0.102:8090"
+  }
+
   if (typeof window !== "undefined") {
     return `${window.location.protocol}//${window.location.hostname}:8090`;
   }
