@@ -41,7 +41,7 @@
 
 </script>
 
-<main class="w-full h-full flex flex-col justify-end items-center gap-4 p-4">
+<main class="w-full h-full flex flex-col justify-end items-center gap-4 p-4 overflow-y-scroll">
   <section class="flex-1 w-full">
     <p class="text-xl font-light first-letter:uppercase">{new Date().toLocaleString("it", { dayPeriod: "long" })}</p>
     <h1 class="first-letter:uppercase font-bold text-2xl">
@@ -51,7 +51,7 @@
   {#if futureDocs.length > 0}
     {@const firstDoc = futureDocs[0]}
     {@const anteprima = firstDoc.attachments.length > 0 ? true : false}
-    <Card.Root class="relative mx-auto w-full max-w-xs pt-0 h-1/2">
+    <Card.Root class="relative mx-auto w-full max-w-xs pt-0">
       <div class="absolute inset-0 z-30 aspect-video bg-black/35"></div>
       {#if anteprima}
         <iframe
@@ -90,7 +90,7 @@
           <p class="font-light">documenti in arrivo...</p>
         </hgroup>
       </div>
-      <div class="aspect-square h-full flex-1 border border-b rounded-xl p-4">
+      <div class="aspect-video h-full flex-1 border border-b rounded-xl p-4">
         <hgroup class="w-full h-full flex flex-col justify-center">
           <h1 class="font-black text-xl">{docState.docsList.length}</h1>
           <p class="font-light">documenti totali!</p>
