@@ -8,7 +8,7 @@ import { createAuthMiddleware } from "better-auth/api";
 
 import { dev } from "$app/environment";
 
-const client = new Pocketbase(dev ? "http://192.168.0.102:8090" : "http://localhost:8090")
+const client = new Pocketbase(dev ? "http://192.168.0.102:8090" : "http://roberto-fretel-v3.taile9b1b0.ts.net:8090")
 await client.collection("_superusers").authWithPassword(POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD);
 
 export const auth = betterAuth({
