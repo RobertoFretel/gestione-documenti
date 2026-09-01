@@ -20,7 +20,6 @@
   import Edit from "@lucide/svelte/icons/pencil"
 
   import { cn } from "$lib/utils.js";
-
   let { children, data } = $props();
   
   let dialogOpen = $state(false)

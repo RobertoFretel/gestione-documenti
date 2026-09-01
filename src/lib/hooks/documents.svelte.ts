@@ -65,7 +65,6 @@ export class DocumentsState {
     if (!files.length) return;
 
     for (const file of Array.from(files)) {
-      console.log(file)
       try {
         const updatedRecord = await pb.collection('documents').update(docId, {
           "attachments+": file

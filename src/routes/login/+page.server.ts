@@ -36,7 +36,6 @@ export const actions: Actions = {
         headers: request.headers
       })
     } catch (error) {
-      console.log(error)
       return fail(401, {
         type: "pocketbase_error",
         errors: "Invalid email or password",

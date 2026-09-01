@@ -21,6 +21,7 @@ const getClientPbUrl = () => {
 
 const AUTH_KEY = Symbol("AUTH_KEY")
 export const pb = new PocketBase(getClientPbUrl()) as TypedPocketBase;
+pb.autoCancellation(false)
 
 type SuccessfullAuth = { isValidPocket: true, betterAuth<Option extends BetterAuthClientOptions>(options?: Option | undefined): SvelteAuthClient<Option> }
 type FailedAuth = { isValidPocket: false }

@@ -15,7 +15,7 @@
   let session = sessionStore ? sessionStore.useSession() : null;
 
   let date = new Date();
-  let value = $state<CalendarDate>(new CalendarDate(date.getFullYear(), date.getMonth(), date.getDate()));
+  let value = $state<CalendarDate>(new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate()));
 
   const items = {
     content: [
